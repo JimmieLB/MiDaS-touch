@@ -1,0 +1,10 @@
+
+
+*.jpeg
+*.jpg
+*.png
+*.pt
+input/*
+!input/.gitinclude
+output/*
+!output/.gitinclude
