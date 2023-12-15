@@ -7,7 +7,7 @@ A depth-map estimation ai is used called "MiDaS" and the result of the depth map
 the MiDaS ai and is used to create a 3d-printed object hence the name "MiDaS-touch"
 
 <img width="1204" alt="image" src="https://github.com/JimmieLB/MiDaS-touch/assets/60014163/a8fdcd29-9438-4ba5-b189-68e7be6dbb15">
-### STL File
+## STL File
 <img width="1037" alt="image" src="https://github.com/JimmieLB/MiDaS-touch/assets/60014163/2d1c9cc7-3e64-4bce-b86a-6ea84d5056d3">
 
 
