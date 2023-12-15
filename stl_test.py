@@ -28,10 +28,10 @@ def test_stl2(shrink=False):
 
 def test_stl3(shrink=False):
   noise = PerlinNoise()
-  w = 2000
-  h = 2000
+  w = 500
+  h = 500
   print("Defining vertices...")
-  vertices = [[abs(noise([i/w, j/h])) * 20 + 10  for j in range(w)] for i in range(h)]
+  vertices = [[abs(noise([i/100, j/100])) * 5 + 10  for j in range(w)] for i in range(h)]
   vertices = np.array(vertices)
   print("Starting Mesh...")
   test2 = create(vertices, shrink=shrink)
@@ -40,4 +40,4 @@ def test_stl3(shrink=False):
 
 
 
-test_stl(shrink=False)
+test_stl3(shrink=True)

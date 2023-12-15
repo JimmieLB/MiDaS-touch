@@ -20,6 +20,7 @@ def run(argv):
 
     try:
         args["model"] = argv[argv.index("--model_type") + 1]
+        print(f"model is {args['model']}")
     except:
         args["model"] = DEFAULT_MODEL
 
@@ -29,8 +30,10 @@ def run(argv):
     midas.eval()
 
     # Input transformation pipeline for MiDaS
-    transform = torch.hub.load("intel-isl/MiDaS", "transforms").default_transform
-
+    if args["model"] == "DPT_Large" or args["model"] == "DPT_Hybrid":
+        transform = torch.hub.load("intel-isl/MiDaS", "transforms").dpt_transform
+    else:
+        transform = torch.hub.load("intel-isl/MiDaS", "transforms").small_transform
     # Directory containing the images
     input_dir = 'input'
     output_dir = 'output'
@@ -43,7 +46,7 @@ def run(argv):
     depth_data = {}
 
     # Get list of all image files in the input directory
-    image_files = [f for f in os.listdir(input_dir) if f.endswith(('.jpg', '.jpeg', '.png'))]
+    image_files = [f for f in os.listdir(input_dir) if f.endswith(('.jpg', '.jpeg', '.png','.webp'))]
 
     # Process and display each image and its depth map
     for file_name in image_files:
