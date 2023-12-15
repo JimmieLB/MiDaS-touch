@@ -40,4 +40,4 @@ def test_stl3(shrink=False):
 
 
 
-test_stl3(shrink=False)
+test_stl(shrink=False)

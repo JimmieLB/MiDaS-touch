@@ -1,4 +1,5 @@
 import os
+import sys
 import cv2
 import torch
 import numpy as np
@@ -6,111 +7,126 @@ import matplotlib.pyplot as plt
 from stl import mesh
 from create_stl import create
 
-img_path = os.path.join('/input', 'mona-lisa.jpeg')
-
-# Read and convert the image
-img = cv2.imread('./input/mona-lisa.jpeg')
-img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+DEFAULT_MODEL = "MiDaS"
 
 
-# Load the MiDaS large model
-midas = torch.hub.load("intel-isl/MiDaS", "MiDaS")
-midas.to('cpu')
-midas.eval()
+def run(argv):
+    args = {'gui': True}
+    try:
+        argv.index("--nogui")
+        args['gui'] = False
+    except:
+        pass
 
-# Input transformation pipeline for MiDaS large
-transform = torch.hub.load("intel-isl/MiDaS", "transforms").default_transform
+    try:
+        args["model"] = argv[argv.index("--model_type") + 1]
+    except:
+        args["model"] = DEFAULT_MODEL
 
-# Directory containing the images
-input_dir = 'input'
-output_dir = 'output'
+    # Load the MiDaS model
+    midas = torch.hub.load("intel-isl/MiDaS", args['model'])
+    midas.to('cpu')
+    midas.eval()
 
-# Create output directory if it doesn't exist
-if not os.path.exists(output_dir):
-    os.makedirs(output_dir)
+    # Input transformation pipeline for MiDaS
+    transform = torch.hub.load("intel-isl/MiDaS", "transforms").default_transform
 
-# Initialize a dictionary to store depth data
-depth_data = {}
+    # Directory containing the images
+    input_dir = 'input'
+    output_dir = 'output'
 
-# Get list of all image files in the input directory
-image_files = [f for f in os.listdir(input_dir) if f.endswith(('.jpg', '.jpeg', '.png'))]
+    # Create output directory if it doesn't exist
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
-# Process and display each image and its depth map
-for file_name in image_files:
-    img_path = os.path.join(input_dir, file_name)
+    # Initialize a dictionary to store depth data
+    depth_data = {}
 
-    # Read and convert the image
-    img = cv2.imread(img_path)
-    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    # Get list of all image files in the input directory
+    image_files = [f for f in os.listdir(input_dir) if f.endswith(('.jpg', '.jpeg', '.png'))]
 
-    # Transform the image for MiDaS
-    input_batch = transform(img_rgb).to('cpu')
+    # Process and display each image and its depth map
+    for file_name in image_files:
+        img_path = os.path.join(input_dir, file_name)
 
-    # Predict the depth
-    with torch.no_grad():
-        prediction = midas(input_batch)
-        prediction = torch.nn.functional.interpolate(
-            prediction.unsqueeze(1),
-            size=img_rgb.shape[:2],
-            mode='bicubic',
-            align_corners=False
-        ).squeeze()
+        # Read and convert the image
+        img = cv2.imread(img_path)
+        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-        output = prediction.cpu().numpy()
+        # Transform the image for MiDaS
+        input_batch = transform(img_rgb).to('cpu')
 
-    # Compute depth statistics
-    avg_depth = np.mean(output)
-    max_depth = np.max(output)
-    min_depth = np.min(output)
+        # Predict the depth
+        with torch.no_grad():
+            prediction = midas(input_batch)
+            prediction = torch.nn.functional.interpolate(
+                prediction.unsqueeze(1),
+                size=img_rgb.shape[:2],
+                mode='bicubic',
+                align_corners=False
+            ).squeeze()
 
-    # Display the original image and depth map
-    plt.figure(figsize=(12, 6))
-    plt.subplot(1, 3, 1)
-    plt.imshow(img_rgb)
-    plt.title('Original Image')
-    plt.axis('off')
-
-
-    plt.subplot(1, 3, 2)
-    plt.imshow(output, cmap='inferno')
-    plt.title('Depth Map')
-    plt.axis('off')
+            output = prediction.cpu().numpy()
 
 
-    # Display 3d representation of depth map
+        # Compute depth statistics
+        avg_depth = np.mean(output)
+        max_depth = np.max(output)
+        min_depth = np.min(output)
 
-    w = len(output[0])
-    h = len(output)
-
-    # fig = plt.figure()
-    ax = plt.subplot(1,3,3, projection='3d')
-    plt.title('3D Preview')
-    ax.axes.set_zlim3d(bottom=0, top=max_depth)
-    ax.axes.set_xlim3d(left=0, right=max(w,h))
-    ax.axes.set_ylim3d(bottom=0, top=max(w,h))
-
-    # ax.grid(False)
-    # ax.axis('off')
-    x_list = [[x for x in range(w)] for y in range(h)]
-    y_list = [[y for x in range(w)] for y in range(h)]
-    ax.plot_surface(x_list, y_list,output * 0.5)
+        if args['gui']:
+            # Display the original image and depth map
+            plt.figure(figsize=(12, 6))
+            plt.subplot(1, 3, 1)
+            plt.imshow(img_rgb)
+            plt.title('Original Image')
+            plt.axis('off')
 
 
-    plt.show()
+            plt.subplot(1, 3, 2)
+            plt.imshow(output, cmap='inferno')
+            plt.title('Depth Map')
+            plt.axis('off')
 
-    print(np.array(output).shape)
-    create(output, name=file_name.rsplit('.',1)[0])
+
+            # Display 3d representation of depth map
+
+            w = len(output[0])
+            h = len(output)
+
+            # fig = plt.figure()
+            ax = plt.subplot(1,3,3, projection='3d')
+            plt.title('3D Preview')
+            ax.axes.set_zlim3d(bottom=0, top=max_depth)
+            ax.axes.set_xlim3d(left=0, right=max(w,h))
+            ax.axes.set_ylim3d(bottom=0, top=max(w,h))
+
+            # ax.grid(False)
+            # ax.axis('off')
+            x_list = [[x for x in range(w)] for y in range(h)]
+            y_list = [[y for x in range(w)] for y in range(h)]
+            ax.plot_surface(x_list, y_list,output * 0.5)
 
 
-    # Print depth statistics
-    print(f"Depth Data:")
-    print(f"  Average Depth: {avg_depth}")
-    print(f"  Maximum Depth: {max_depth}")
-    print(f"  Minimum Depth: {min_depth}")
-    print("\n")
+            plt.show()
 
-# Save the depth data to a file
-output_data_path = os.path.join(output_dir, 'depth_data.txt')
-with open(output_data_path, 'w') as file:
-    for key, value in depth_data.items():
-        file.write(f'{key}: {value}\n')
+            print(np.array(output).shape)
+
+        create(output, name=file_name.rsplit('.',1)[0])
+
+
+        # Print depth statistics
+        print(f"Depth Data:")
+        print(f"  Average Depth: {avg_depth}")
+        print(f"  Maximum Depth: {max_depth}")
+        print(f"  Minimum Depth: {min_depth}")
+        print("\n")
+
+    # Save the depth data to a file
+    output_data_path = os.path.join(output_dir, 'depth_data.txt')
+    with open(output_data_path, 'w') as file:
+        for key, value in depth_data.items():
+            file.write(f'{key}: {value}\n')
+
+if __name__ == "__main__":
+    run(sys.argv)
