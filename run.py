@@ -99,7 +99,7 @@ for file_name in image_files:
     plt.show()
 
     print(np.array(output).shape)
-    create(output)
+    create(output, name=file_name.rsplit('.',1)[0])
 
 
     # Print depth statistics

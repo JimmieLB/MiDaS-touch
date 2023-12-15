@@ -6,15 +6,13 @@ def in_range(index, list):
 
 
 # raw_data: nxn matrix representing depth levels of an image
-def create(raw_data, shrink=True):
+def create(raw_data, name="cube", shrink=True, z_max=20, xy_max=200):
   verts = []
   indexes = []
   i = 0
   xy_scale = 1
   z_scale = 1
   if shrink:
-    z_max = 20
-    xy_max = 200
     xy_data_max = max([len(raw_data), len(raw_data[0])])
     xy_scale = xy_max / xy_data_max
     z_data_max = np.max(raw_data)
@@ -87,7 +85,7 @@ def create(raw_data, shrink=True):
   # Write the mesh to file "cube.stl"
   print("Saving Mesh...")
 
-  cube.save('./output/cube.stl')
+  cube.save(f'./output/{name}.stl')
 
   print("Mesh Saved")
 
