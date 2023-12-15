@@ -13,12 +13,17 @@ the MiDaS ai and is used to create a 3d-printed object hence the name "MiDaS-tou
 
 ## Getting Started
 
+### Prerequisites
+1. Latest version of python and pip
+
 ### Installation
-
-
 1. Clone repo
-  ```git clone https://github.com/JimmieLB/MiDaS-touch.git```
-2. Install pip packages
-   ```pip install numpy torch opencv-python numpy-stl```
-3. Add image files to "input" folder
-4. Run "run.py"
+  ```sh
+  git clone https://github.com/JimmieLB/MiDaS-touch.git
+  ```
+3. Install pip packages
+  ```sh
+  pip install numpy torch opencv-python numpy-stl
+  ```
+5. Add image files to "input" folder
+6. Run "run.py"
