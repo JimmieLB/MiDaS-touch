@@ -3,7 +3,15 @@ import cv2
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
-import shapely.geometry as geom
+from stl import mesh
+from create_stl import create
+
+img_path = os.path.join('/input', 'mona-lisa.jpeg')
+
+# Read and convert the image
+img = cv2.imread('./input/mona-lisa.jpeg')
+img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
 
 # Load the MiDaS large model
 midas = torch.hub.load("intel-isl/MiDaS", "MiDaS")
@@ -57,13 +65,13 @@ for file_name in image_files:
 
     # Display the original image and depth map
     plt.figure(figsize=(12, 6))
-    plt.subplot(1, 2, 1)
+    plt.subplot(1, 3, 1)
     plt.imshow(img_rgb)
     plt.title('Original Image')
     plt.axis('off')
 
 
-    plt.subplot(1, 2, 2)
+    plt.subplot(1, 3, 2)
     plt.imshow(output, cmap='inferno')
     plt.title('Depth Map')
     plt.axis('off')
@@ -71,14 +79,28 @@ for file_name in image_files:
 
     # Display 3d representation of depth map
 
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
     w = len(output[0])
     h = len(output)
-    # x, y = np.meshgrid(range(output.shape[0]), range(output.shape[1]))
-    ax.plot_surface([[x for x in range(w)] for y in range(h)], [[y for x in range(w)] for y in range(h)],output)
+
+    # fig = plt.figure()
+    ax = plt.subplot(1,3,3, projection='3d')
+    plt.title('3D Preview')
+    ax.axes.set_zlim3d(bottom=0, top=max_depth)
+    ax.axes.set_xlim3d(left=0, right=max(w,h))
+    ax.axes.set_ylim3d(bottom=0, top=max(w,h))
+
+    # ax.grid(False)
+    # ax.axis('off')
+    x_list = [[x for x in range(w)] for y in range(h)]
+    y_list = [[y for x in range(w)] for y in range(h)]
+    ax.plot_surface(x_list, y_list,output * 0.5)
+
 
     plt.show()
+
+    print(np.array(output).shape)
+    create(output)
+
 
     # Print depth statistics
     print(f"Depth Data:")

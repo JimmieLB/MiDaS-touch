@@ -9,3 +9,4 @@ input/*
 !input/.gitinclude
 output/*
 !output/.gitinclude
+__pycache__
