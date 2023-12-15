@@ -34,8 +34,8 @@ the MiDaS ai and is used to create a 3d-printed object hence the name "MiDaS-tou
    ```sh
    python3 run.py --model <model_type> --nogui
    ```
-   Model_Types are:
-     "DPT_Large"    # MiDaS v3 - Large     (highest accuracy, slowest inference speed)
-     "DPT_Hybrid"   # MiDaS v3 - Hybrid    (medium accuracy, medium inference speed)
-     "MiDaS_small"  # MiDaS v2.1 - Small   (lowest accuracy, highest inference speed)
+   Model_Types are:  
+     "DPT_Large"    # MiDaS v3 - Large     (highest accuracy, slowest inference speed)  
+     "DPT_Hybrid"   # MiDaS v3 - Hybrid    (medium accuracy, medium inference speed)  
+     "MiDaS_small"  # MiDaS v2.1 - Small   (lowest accuracy, highest inference speed)  
 
