@@ -10,6 +10,9 @@ the MiDaS ai and is used to create a 3d-printed object hence the name "MiDaS-tou
 ## STL File
 <img width="1037" alt="image" src="https://github.com/JimmieLB/MiDaS-touch/assets/60014163/2d1c9cc7-3e64-4bce-b86a-6ea84d5056d3">
 
+<img width="1072" alt="image" src="https://github.com/JimmieLB/MiDaS-touch/assets/60014163/92d29559-8357-4160-87b9-8ab9839b47dc">
+<img width="1080" alt="image" src="https://github.com/JimmieLB/MiDaS-touch/assets/60014163/4f92784f-fd29-4735-8473-1ca3e9f28358">
+
 
 ## Getting Started
 
