@@ -31,7 +31,7 @@ def test_stl3(shrink=False):
   w = 500
   h = 500
   print("Defining vertices...")
-  vertices = [[abs(noise([i/100, j/100])) * 5 + 10  for j in range(w)] for i in range(h)]
+  vertices = [[noise([i/60, j/60]) * 10 + 20  for j in range(w)] for i in range(h)]
   vertices = np.array(vertices)
   print("Starting Mesh...")
   test2 = create(vertices, shrink=shrink)
